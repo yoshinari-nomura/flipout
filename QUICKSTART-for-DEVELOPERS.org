@@ -1,0 +1,134 @@
+#+TITLE: Rust wasm-bindgen による開発のはじめかた
+#+AUTHOR: Yoshinari Nomura
+#+EMAIL:
+#+DATE: 2020-10-26
+#+OPTIONS: H:3 num:2 toc:nil
+#+OPTIONS: ^:nil @:t \n:nil ::t |:t f:t TeX:t
+#+OPTIONS: skip:nil
+#+OPTIONS: author:t
+#+OPTIONS: email:nil
+#+OPTIONS: creator:nil
+#+OPTIONS: timestamp:nil
+#+OPTIONS: timestamps:nil
+#+OPTIONS: d:nil
+#+OPTIONS: tags:t
+#+TEXT:
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE: ja
+#+LATEX_CLASS: jsarticle
+#+LATEX_CLASS_OPTIONS: [a4j,dvipdfmx]
+# #+LATEX_HEADER: \usepackage{plain-article}
+# #+LATEX_HEADER: \renewcommand\maketitle{}
+# #+LATEX_HEADER: \pagestyle{empty}
+# #+LaTeX: \thispagestyle{empty}
+
+* Rust wasm-bindgen による開発
+** 環境構築
+
+1) node のインストール
+   #+begin_src shell-script
+     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+     nvm install node
+   #+end_src
+
+2) wasm-pack のインストール
+   ~/.cargo/bin/wasm-pack にバイナリをダウンロードする
+   #+begin_src shell-script
+     curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+   #+end_src
+
+3) cargo-generate のインストール
+   #+begin_src shell-script
+     cargo install cargo-generate
+   #+end_src
+
+** Wasm パッケージのプロジェクト作成 & ビルド
+
+1) テンプレートから  flipout という名前で wasm プロジェクトを掘って，ビルドしてみる
+   #+begin_src shell-script
+     cargo generate --git https://github.com/rustwasm/wasm-pack-template --name flipout
+     cd flipout
+     export TOP=$(pwd)
+     wasm-pack build
+     ls -l pkg/
+   #+end_src
+   pkg/ 以下に wasm が．pkg/ は Node の module になってる
+
+** Web ページ部分の作成
+
+1) www/ 以下に Web ページ部分を作る
+   #+begin_src shell-script
+     cd $TOP
+     npm init wasm-app www
+     cd www
+   #+end_src
+
+2) flipout module が www から使えるように package.json に追加する
+   #+begin_src diff
+     --- www.orig/package.json 2020-10-13 16:06:48.561210994 +0900
+     +++ www/package.json 2020-09-29 17:28:49.422320159 +0900
+     @@ -27,7 +27,7 @@
+        },
+        "homepage": "https://github.com/rustwasm/create-wasm-app#readme",
+        "devDependencies": {
+     -    "hello-wasm-pack": "^0.1.0",
+     +    "flipout": "file:../pkg",
+          "webpack": "^4.29.3",
+          "webpack-cli": "^3.1.0",
+          "webpack-dev-server": "^3.1.5",
+   #+end_src
+
+3) pkg/ 以下に作った wasm パッケージを js 側に取り込む
+
+   www/index.js の import を flipout に変更
+   #+begin_src diff
+     --- www/index.js.orig
+     +++ www/index.js
+     @@ -1,3 +1,3 @@
+     -import * as wasm from "hello-wasm-pack";
+     +import * as wasm from "flipout";
+
+     -wasm.greet();
+     +// wasm.greet();
+   #+end_src
+
+3) node_modules/ に必要なパッケージをインストール
+   #+begin_src shell-script
+     cd $TOP/wwww
+     npm install
+   #+end_src
+
+4) npm で web サーバを立ち上げて確認
+   #+begin_src shell-script
+     cd $TOP/www
+     npm run start -- --port 9000
+     open http://localhost:9000/
+   #+end_src
+
+5) webpack で deploy 可能な dist を作る
+   #+begin_src shell-script
+     cd $TOP/www
+     npm run build
+     ls -l dist/
+   #+end_src
+   dist/ 以下を nginx 等でサーブできる
+
+** インクリメンタルな開発
+   #+begin_src shell-script
+     cd $TOP
+     wasm-pack build
+     cd www
+     npm run build
+     npm run start -- --port 9000
+   #+end_src
+  + open http://localhost:9000
+
+* 参考になるサイト
+  + [[https://rustwasm.github.io/docs/book/][Introduction - Rust and WebAssembly]] Game of Life のチュートリアル
+    + [[https://github.com/rustwasm/wasm_game_of_life][rustwasm/wasm_game_of_life: A Rust and WebAssembly tutorial implementing the Game of Life]]
+  + [[https://rustwasm.github.io/docs/wasm-bindgen/introduction.html][Introduction - The `wasm-bindgen` Guide]]
+    + web-sys, js-sys の話も書いてある
+  + [[https://github.com/aochagavia/rocket_wasm][aochagavia/rocket_wasm: The Rocket game, now compiling to WASM]]
+  + [[https://github.com/rustwasm/wasm-bindgen/blob/master/examples/webgl/src/lib.rs][wasm-bindgen/lib.rs at master · rustwasm/wasm-bindgen]]
+    wasm-bindgen/examples/webgl/src/lib.rs

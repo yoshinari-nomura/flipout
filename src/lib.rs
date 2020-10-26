@@ -1,3 +1,17 @@
+//! flipout is a reversi (Othello) implementation in Rust
+//!
+
+pub type BitBoard = u64;
+pub type Position = u64;
+pub type Positions = u64;
+
+pub mod bitboard;
+pub mod board;
+pub mod minimax;
+pub mod player;
+pub mod position;
+pub mod ui_board;
+
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -7,13 +21,3 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, flipout!");
-}

@@ -68,16 +68,17 @@ impl Game {
             Action::Pass => {
                 if board.pass().is_ok() {
                     message!(name, "Pass");
+                    self.update_screen();
                 } else {
                     message!(name, "Can't pass");
                     return false;
                 }
             }
             Action::Move(mov) => {
-                let reversible = board.board().reversible_stones(mov);
+                let reversible = board.reversible_stones(mov);
                 if board.put_stone(mov).is_ok() {
                     message!(name, "Move {}", Position::from_u64(mov).unwrap());
-                    self.update_screen_with_animation(reversible)
+                    self.update_screen_with_animation(reversible);
                 } else {
                     // message!(name, "{}", e);
                     return false;

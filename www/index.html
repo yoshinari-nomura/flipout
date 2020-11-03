@@ -2,10 +2,139 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Hello wasm-pack!</title>
+    <title>Flipout</title>
+    <style type="text/css">
+      .white-stone {
+        display: inline-block;
+        text-align:center;
+        vertical-align: middle;
+        line-height: 2em;
+        width: 2em;
+        height: 2em;
+        border-radius: 50%;
+        color: black;
+        background: white;
+        border: solid 2px black;
+      }
+
+      .black-stone {
+        display: inline-block;
+        text-align:center;
+        vertical-align: middle;
+        line-height: 2em;
+        width: 2em;
+        height: 2em;
+        border-radius: 50%;
+        color: white;
+        background: black;
+        border: solid 2px white;
+      }
+
+      .message {
+        display: inline-block;
+        vertical-align: middle;
+        background-color: #bce1df;
+        height: 2em;
+        width: 10em;
+        padding-top: 0.2em;
+        padding-bottom: 0em;
+        padding-left: 0.5em;
+        padding-right: 0.2em;
+        border-radius: 5px;
+      }
+
+      <!-- Thanks to https://saruwakakun.com/html-css/reference/buttons -->
+      .btn-square-pop:active {
+        border-bottom: solid 2px #fd9535;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.30);
+      }
+
+      .btn-square {
+        display: inline-block;
+        padding: 0.5em 1em;
+        text-decoration: none;
+        background: #668ad8; /* button color */
+        color: #FFF;
+        border-bottom: solid 4px #627295;
+        border-radius: 3px;
+      }
+
+      .btn-square:active {
+        -webkit-transform: translateY(4px);
+        transform: translateY(4px); /* move down */
+        border-bottom: none; /* erase line */
+      }
+
+      table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        position: absolute;
+        overflow: scroll;
+      }
+
+      td, th {
+        border:2px solid #333;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      td {
+        overflow: hidden;
+        width: 80px;
+        height: 80px;
+        background: #69b076;
+      }
+    </style>
   </head>
   <body>
+    <h3>Flipout</h3>
+    <canvas id="canvas" tabindex="1" width="642" height="642" style="background: url('assets/background.png')"></canvas>
+    <div>
+      <a href="#" id="pass" class="btn-square">PASS</a>
+      <span class="black-stone" id="black"></span>
+      <span class="message" id="you"></span>
+
+      <span class="white-stone" id="white"></span>
+      <span class="message" id="com"></span>
+    </div>
+
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
     <script src="./bootstrap.js"></script>
+
+    <!--
+    <h1>Flipout (svg version)</h1>
+    <svg viewBox="0 0 642 642" width="642" height="642" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="green" x="0" y="0" width=".125" height=".125">
+          <rect x="1" y="1" width="78" height="78" fill="#69b076"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="black"/>
+      <rect fill="url(#green)" x="1" y="1" width="640" height="640"/>
+    </svg>
+    -->
+
+    <!--
+    <h1>Flipout (table version)</h1>
+    <table>
+      <caption> Flipout </caption>
+      <thead>
+        <tr>
+          <th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th>1</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>2</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>3</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>4</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>5</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>6</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>7</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>8</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    -->
   </body>
 </html>

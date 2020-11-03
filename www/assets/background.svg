@@ -1,0 +1,10 @@
+<svg viewBox="0 0 642 642" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="green" x="0" y="0" width=".125" height=".125">
+      <rect x="2" y="2" width="78" height="78" fill="#69b076"/>
+    </pattern>
+  </defs>
+
+  <rect width="100%" height="100%" fill="black"/>
+  <rect fill="url(#green)" x="0" y="0" width="640" height="640"/>
+</svg>

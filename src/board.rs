@@ -10,9 +10,11 @@
 
 use crate::bitboard::{self, BitBoard, Move, Moves};
 use std::fmt;
+use wasm_bindgen::prelude::*;
 
 /// Used to express the current player.
-#[derive(Copy, Clone, PartialEq)]
+#[wasm_bindgen]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Turn {
     Black,
     White,

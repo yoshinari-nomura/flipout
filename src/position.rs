@@ -53,6 +53,16 @@ impl Position {
         }
     }
 
+    pub fn from_xy(x: i32, y: i32) -> Option<Self> {
+        if 0 <= x && x <= 7 && 0 <= y && y <= 7 {
+            Some(Position {
+                pos: (1 << 63) >> (y * 8 + x),
+            })
+        } else {
+            None
+        }
+    }
+
     pub fn as_bitboard(&self) -> BitBoard {
         self.pos
     }

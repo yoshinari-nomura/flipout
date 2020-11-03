@@ -172,7 +172,7 @@ pub fn legal_moves(black: BitBoard, white: BitBoard) -> Moves {
     tmp |= mask & (tmp >> 9);
     moves |= hole & (tmp >> 9);
 
-    return moves;
+    moves
 }
 
 /// Find reversible stones if black moves at `position`.

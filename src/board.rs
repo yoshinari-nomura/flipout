@@ -47,6 +47,12 @@ pub struct Board {
     pub turn: Turn,
 }
 
+impl Default for Board {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Board {
     /// Create new reversi board
     pub fn new() -> Self {
@@ -73,12 +79,16 @@ impl Board {
         (self.black | self.white).count_zeros()
     }
 
-    pub fn count_reversible_stones(&self, mov: Move) -> u32 {
+    pub fn reversible_stones(&self, mov: Move) -> BitBoard {
         if self.is_black_turn() {
-            bitboard::reversible_stones(self.black, self.white, mov).count_ones()
+            bitboard::reversible_stones(self.black, self.white, mov)
         } else {
-            bitboard::reversible_stones(self.white, self.black, mov).count_ones()
+            bitboard::reversible_stones(self.white, self.black, mov)
         }
+    }
+
+    pub fn count_reversible_stones(&self, mov: Move) -> u32 {
+        self.reversible_stones(mov).count_ones()
     }
 
     pub fn pass(&mut self) -> &Self {
@@ -127,11 +137,7 @@ impl Board {
     }
 
     pub fn is_black_turn(&self) -> bool {
-        if self.turn == Turn::Black {
-            true
-        } else {
-            false
-        }
+        self.turn == Turn::Black
     }
 
     pub fn is_legal_move(&self, mov: Move) -> bool {
@@ -176,6 +182,7 @@ impl Board {
         self.eval_score_single(turn) - self.eval_score_single(turn.opposit())
     }
 
+    #[allow(clippy::many_single_char_names)]
     fn eval_score_single(&self, turn: Turn) -> i32 {
         let mut bitboard = if turn.is_black() {
             self.black
@@ -192,15 +199,16 @@ impl Board {
         let mut score_table: [i32; 64] = if holes == 0 {
             [1; 64]
         } else {
+            let (o, b, c, n, a, x) = (0, -1, -3, -12, -15, 30);
             [
-                30, -12, 0, 0, 0, 0, -12, 30, // 0..7
-                -12, -15, -3, -3, -3, -3, -15, -12, // 8..15
-                0, -3, 0, 0, 0, 0, -3, 0, // 16..23
-                -1, -3, -1, -1, -1, 0, 0, -1, // 24..31
-                -1, -3, 0, 0, 0, 0, -3, -1, // 32..39
-                0, -3, 0, 0, -0, 0, -3, 0, // 40..47
-                -12, -15, -3, -3, -3, -3, -15, -12, // 48..55
-                30, -12, 0, 0, 0, 0, -12, 30, // 56..63
+                x, n, o, o, o, o, n, x, // 00..07
+                n, a, c, c, c, c, a, n, // 08..15
+                o, c, o, o, o, o, c, o, // 16..23
+                b, c, b, b, b, o, o, b, // 24..31
+                b, c, o, o, o, o, c, b, // 32..39
+                o, c, o, o, o, o, c, o, // 40..47
+                n, a, c, c, c, c, a, n, // 48..55
+                x, n, o, o, o, o, n, x, // 56..63
             ]
         };
 
@@ -244,7 +252,7 @@ impl fmt::Display for Board {
         let mut white = self.white;
         let mask: u64 = 1 << 63;
 
-        write!(f, "  abcdefgh\n")?;
+        writeln!(f, "  abcdefgh")?;
 
         for row in 1..=8 {
             write!(f, "{} ", row)?;
@@ -261,7 +269,7 @@ impl fmt::Display for Board {
                 black <<= 1;
                 white <<= 1;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }

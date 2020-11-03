@@ -1,10 +1,9 @@
-extern crate rand;
-
 use crate::board::Turn;
 use crate::minimax;
 use crate::position::Position;
 use crate::ui_board::UiBoard;
 use std::io::{self, BufRead, Write};
+use std::str::FromStr;
 
 pub enum Action {
     Move(u64),
@@ -14,8 +13,7 @@ pub enum Action {
 
 pub trait Player {
     fn action(&mut self, board: &UiBoard) -> Action;
-    fn game_over(&self, _board: &UiBoard) {}
-    fn update(&self, _board: &UiBoard) {}
+    /*    fn update(&self, _board: &UiBoard) {} */
 }
 
 pub struct HumanPlayer {
@@ -26,9 +24,21 @@ pub struct RobotPlayer {}
 
 pub struct CleverRobotPlayer {}
 
+impl Default for RobotPlayer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RobotPlayer {
     pub fn new() -> Self {
         RobotPlayer {}
+    }
+}
+
+impl Default for CleverRobotPlayer {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -57,7 +67,7 @@ impl Player for RobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
         let vec = board.board().legal_moves_as_vec();
 
-        if vec.len() == 0 {
+        if vec.is_empty() {
             Action::Pass
         } else {
             let rnd: usize = rand::random();
@@ -119,7 +129,7 @@ impl Player for HumanPlayer {
                 return Action::Pass;
             } else if &line == "giveup" {
                 return Action::GiveUp;
-            } else if let Some(pos) = Position::from_str(&line) {
+            } else if let Ok(pos) = Position::from_str(&line) {
                 return Action::Move(pos.as_bitboard());
             } else {
                 println!("Invalid command '{}'", &line);
@@ -127,8 +137,10 @@ impl Player for HumanPlayer {
         }
     }
 
+    /*
     fn update(&self, board: &UiBoard) {
         HumanPlayer::clear_screen();
         print!("{}", board);
     }
+    */
 }

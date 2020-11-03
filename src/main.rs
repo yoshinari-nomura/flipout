@@ -1,10 +1,6 @@
 //! flipout is a reversi (Othello) implementation in Rust
 //!
 
-// nightly only 2018-11-21
-// #![feature(nll)]
-extern crate flipout;
-
 use flipout::player::*;
 use flipout::position::Position;
 use flipout::ui_board::UiBoard;
@@ -58,29 +54,23 @@ fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Playe
 
         match action {
             Action::GiveUp => break,
-            Action::Pass => match board.pass() {
-                Ok(_) => {
+            Action::Pass => {
+                if board.pass().is_ok() {
                     println!("pass");
                 }
-                Err(_) => (),
-            },
+            }
             Action::Move(mov) => {
                 println!("move {}", Position::from_u64(mov).unwrap());
-                match board.put_stone(mov) {
-                    Ok(_) => (),
-                    Err(_) => (),
-                }
+                if board.put_stone(mov).is_ok() {}
             }
         }
 
-        player.update(&board);
+        // player.update(&board);
 
         if board.is_game_over() {
             break;
         }
     }
-    black.game_over(&board);
-    white.game_over(&board);
     print!("{}", board);
 }
 

@@ -66,7 +66,7 @@ impl fmt::Display for UiBoard {
 
         let mask: u64 = 1 << 63;
 
-        write!(f, "  ａｂｃｄｅｆｇｈ\n")?;
+        writeln!(f, "  ａｂｃｄｅｆｇｈ")?;
 
         for row in 0..8 {
             write!(f, "{} ", row + 1)?;
@@ -86,11 +86,11 @@ impl fmt::Display for UiBoard {
                 white <<= 1;
                 hint <<= 1;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
-        write!(
+        writeln!(
             f,
-            "Black: {} White: {}\n",
+            "Black: {} White: {}",
             self.board.count_black(),
             self.board.count_white()
         )?;

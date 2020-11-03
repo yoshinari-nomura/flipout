@@ -2,14 +2,39 @@
 
 use crate::BitBoard;
 use std::fmt;
+use std::str::FromStr;
 
 #[derive(PartialEq, Debug)]
 pub struct Position {
     pos: BitBoard,
 }
 
+impl FromStr for Position {
+    type Err = ();
+
+    fn from_str(position_str: &str) -> Result<Self, ()> {
+        let ascii = position_str.as_bytes();
+
+        if ascii.len() != 2 {
+            return Err(());
+        }
+
+        let col: i32 = (ascii[0] as i32) - ('a' as i32);
+        let row: i32 = (ascii[1] as i32) - ('1' as i32);
+
+        if 0 <= col && col <= 7 && 0 <= row && row <= 7 {
+            Ok(Position {
+                pos: (1 << 63) >> (row * 8 + col),
+            })
+        } else {
+            Err(())
+        }
+    }
+}
+
 impl Position {
-    pub fn from_str(position_str: &str) -> Option<Self> {
+    /// XXX Result<Position, PositionParseErr> is suitable
+    pub fn from_str_opt(position_str: &str) -> Option<Self> {
         let ascii = position_str.as_bytes();
 
         if ascii.len() != 2 {

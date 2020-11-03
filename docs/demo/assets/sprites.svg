@@ -1,0 +1,116 @@
+<!--
+    To make sprites.png:
+      convert -background transparent sprites.svg sprites.png
+-->
+<svg viewBox="0 0 1280 160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- black sotnes -->
+
+    <g id="black-stone0">
+      <ellipse fill="white" cx="42" cy="42" rx="30" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="black-stone1">
+      <ellipse fill="white" cx="42" cy="42" rx="30" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="black-stone2">
+      <ellipse fill="white" cx="42" cy="42" rx="30" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="black-stone3">
+      <ellipse fill="white" cx="42" cy="42" rx="25" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="25" ry="30" />
+    </g>
+    <g id="black-stone4">
+      <ellipse fill="white" cx="42" cy="42" rx="20" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="20" ry="30" />
+    </g>
+    <g id="black-stone5">
+      <ellipse fill="white" cx="42" cy="42" rx="15" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="15" ry="30" />
+    </g>
+    <g id="black-stone6">
+      <ellipse fill="white" cx="42" cy="42" rx="10" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="10" ry="30" />
+    </g>
+    <g id="black-stone7">
+      <ellipse fill="white" cx="42" cy="42" rx="5" ry="30" />
+      <ellipse fill="black" cx="40" cy="40" rx="5" ry="30" />
+    </g>
+
+    <!-- white sotnes -->
+
+    <g id="white-stone0">
+      <ellipse fill="black" cx="43" cy="43" rx="30" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="white-stone1">
+      <ellipse fill="black" cx="43" cy="43" rx="30" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="white-stone2">
+      <ellipse fill="black" cx="43" cy="43" rx="30" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="30" ry="30" />
+    </g>
+    <g id="white-stone3">
+      <ellipse fill="black" cx="43" cy="43" rx="25" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="25" ry="30" />
+    </g>
+    <g id="white-stone4">
+      <ellipse fill="black" cx="43" cy="43" rx="20" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="20" ry="30" />
+    </g>
+    <g id="white-stone5">
+      <ellipse fill="black" cx="43" cy="43" rx="15" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="15" ry="30" />
+    </g>
+    <g id="white-stone6">
+      <ellipse fill="black" cx="43" cy="43" rx="10" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="10" ry="30" />
+    </g>
+    <g id="white-stone7">
+      <ellipse fill="black" cx="43" cy="43" rx="5" ry="30" />
+      <ellipse fill="white" cx="40" cy="40" rx="5" ry="30" />
+    </g>
+  </defs>
+
+  <!-- black stone transition -->
+  <use x="0000" y="0" xlink:href="#black-stone0" />
+  <use x="0080" y="0" xlink:href="#black-stone1" />
+  <use x="0160" y="0" xlink:href="#black-stone2" />
+  <use x="0240" y="0" xlink:href="#black-stone3" />
+  <use x="0320" y="0" xlink:href="#black-stone4" />
+  <use x="0400" y="0" xlink:href="#black-stone5" />
+  <use x="0480" y="0" xlink:href="#black-stone6" />
+  <use x="0560" y="0" xlink:href="#black-stone7" />
+
+  <!-- white stone transition -->
+  <use x="0640" y="0" xlink:href="#white-stone7" />
+  <use x="0720" y="0" xlink:href="#white-stone6" />
+  <use x="0800" y="0" xlink:href="#white-stone5" />
+  <use x="0880" y="0" xlink:href="#white-stone4" />
+  <use x="0960" y="0" xlink:href="#white-stone3" />
+  <use x="1040" y="0" xlink:href="#white-stone2" />
+  <use x="1120" y="0" xlink:href="#white-stone1" />
+  <use x="1200" y="0" xlink:href="#white-stone0" />
+
+  <circle fill="black" cx="040" cy="120" r="4" />
+  <circle fill="black" cx="120" cy="120" r="4" />
+  <circle fill="black" cx="200" cy="120" r="4" />
+  <circle fill="black" cx="280" cy="120" r="4" />
+  <circle fill="black" cx="360" cy="120" r="4" />
+  <circle fill="black" cx="440" cy="120" r="4" />
+  <circle fill="black" cx="520" cy="120" r="4" />
+  <circle fill="black" cx="600" cy="120" r="4" />
+
+  <circle fill="white" cx="0680" cy="120" r="4" />
+  <circle fill="white" cx="0760" cy="120" r="4" />
+  <circle fill="white" cx="0840" cy="120" r="4" />
+  <circle fill="white" cx="0920" cy="120" r="4" />
+  <circle fill="white" cx="1000" cy="120" r="4" />
+  <circle fill="white" cx="1080" cy="120" r="4" />
+  <circle fill="white" cx="1160" cy="120" r="4" />
+  <circle fill="white" cx="1240" cy="120" r="4" />
+
+</svg>

@@ -65,7 +65,7 @@ impl HumanPlayer {
 
 impl Player for RobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
-        let vec = board.board().legal_moves_as_vec();
+        let vec = board.legal_moves_as_vec();
 
         if vec.is_empty() {
             Action::Pass
@@ -79,9 +79,9 @@ impl Player for RobotPlayer {
 
 impl Player for CleverRobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
-        let board = board.board();
+        let raw_board = board.raw_board();
         let mut moves = board.legal_moves();
-        let turn = board.turn;
+        let turn = board.turn();
 
         if moves == 0 {
             Action::Pass
@@ -93,7 +93,7 @@ impl Player for CleverRobotPlayer {
 
             while moves != 0 {
                 let mov = 1 << moves.trailing_zeros();
-                let mut child = board.clone();
+                let mut child = raw_board.clone();
                 child.put_stone(mov);
                 let score = minimax::minimax(&child, turn, depth);
 

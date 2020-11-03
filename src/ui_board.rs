@@ -2,6 +2,8 @@ use crate::board::{Board, Turn};
 use std::fmt;
 
 pub type Move = u64;
+pub type Moves = u64;
+pub type BitBoard = u64;
 
 pub struct UiBoard {
     board: Board,
@@ -30,8 +32,32 @@ impl UiBoard {
         }
     }
 
-    pub fn board(&self) -> &Board {
+    pub fn raw_board(&self) -> &Board {
         &self.board
+    }
+
+    pub fn count_black(&self) -> u32 {
+        self.board.count_black()
+    }
+
+    pub fn count_hole(&self) -> u32 {
+        self.board.count_hole()
+    }
+
+    pub fn count_white(&self) -> u32 {
+        self.board.count_white()
+    }
+
+    pub fn reversible_stones(&self, mov: Move) -> BitBoard {
+        self.board.reversible_stones(mov)
+    }
+
+    pub fn legal_moves(&self) -> Moves {
+        self.board.legal_moves()
+    }
+
+    pub fn legal_moves_as_vec(&self) -> Vec<Move> {
+        self.board.legal_moves_as_vec()
     }
 
     pub fn turn(&self) -> Turn {

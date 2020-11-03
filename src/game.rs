@@ -55,11 +55,11 @@ impl Game {
 }
 
 impl Game {
-    pub fn update(&mut self, turn: Turn, action: Action) -> bool {
+    fn update(&mut self, turn: Turn, action: Action) -> bool {
         let board = &mut self.board;
         let name = if turn == Turn::Black { "you" } else { "com" };
 
-        if board.board().turn != turn {
+        if board.turn() != turn {
             return false;
         }
 
@@ -88,13 +88,14 @@ impl Game {
     }
 
     fn update_screen_with_animation(&self, reversed: u64) {
-        let board = self.board.board();
+        let board = &self.board;
+        let raw_board = self.board.raw_board();
         let hint = board.legal_moves();
 
         message!("black", "{}", board.count_black());
         message!("white", "{}", board.count_white());
 
-        let color = if board.turn == Turn::White {
+        let color = if board.turn() == Turn::White {
             "white"
         } else {
             "black"
@@ -103,14 +104,14 @@ impl Game {
         for y in 0..8 {
             for x in 0..8 {
                 let pos = (1 << 63) >> (y * 8 + x);
-                if pos & board.black != 0 {
-                    if pos & reversed != 0 && board.turn == Turn::White {
+                if pos & raw_board.black != 0 {
+                    if pos & reversed != 0 && board.turn() == Turn::White {
                         screen_flip_to("black", x, y, 0);
                     } else {
                         screen_put_stone("black", x, y);
                     }
-                } else if pos & board.white != 0 {
-                    if pos & reversed != 0 && board.turn == Turn::Black {
+                } else if pos & raw_board.white != 0 {
+                    if pos & reversed != 0 && board.turn() == Turn::Black {
                         screen_flip_to("white", x, y, 0);
                     } else {
                         screen_put_stone("white", x, y);

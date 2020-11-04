@@ -36,6 +36,17 @@ impl Turn {
     }
 }
 
+impl fmt::Display for Turn {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if *self == Turn::Black {
+            write!(f, "black")?;
+        } else {
+            write!(f, "white")?;
+        }
+        Ok(())
+    }
+}
+
 /// Board is used to store:
 /// * positions of black and white stones
 /// * the current player

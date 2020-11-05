@@ -5,7 +5,7 @@ use std::fmt;
 use std::str::FromStr;
 
 #[derive(PartialEq, Debug)]
-pub struct Position(BitBoard);
+pub struct Position(u64);
 
 impl FromStr for Position {
     type Err = ();
@@ -66,22 +66,47 @@ impl Position {
             Some(Position(position))
         }
     }
-}
 
-// impl Iterator for board::Positions {
-//     type Item = Position;
-//     fn next(&mut self) -> Option<Self::Item> {
-//         // --snip--
-//     }
-// }
+    pub fn x(&self) -> i32 {
+        (self.0.leading_zeros() % 8) as i32
+    }
+
+    pub fn y(&self) -> i32 {
+        (self.0.leading_zeros() / 8) as i32
+    }
+}
 
 impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let row: Vec<char> = "12345678".chars().collect();
-        let col: Vec<char> = "abcdefgh".chars().collect();
-        let num = self.0.leading_zeros();
-        write!(f, "{}{}", col[(num % 8) as usize], row[(num / 8) as usize])?;
+        let col: Vec<char> = "ABCDEFGH".chars().collect();
+        write!(f, "{}{}", col[self.x() as usize], row[self.y() as usize])?;
         Ok(())
+    }
+}
+
+////////////////////////////////////////////////////////////////
+// Positions
+
+struct Positions(u64);
+
+impl Positions {
+    pub fn new(bits: u64) -> Self {
+        Positions(bits)
+    }
+}
+
+impl Iterator for Positions {
+    type Item = Position;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.0 != 0 {
+            let mov = 1 << self.0.trailing_zeros();
+            self.0 &= !mov;
+            Some(Position(mov))
+        } else {
+            None
+        }
     }
 }
 

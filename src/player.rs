@@ -88,7 +88,7 @@ impl Player for CleverRobotPlayer {
         } else {
             let mut best_score = std::i32::MIN;
             let mut best_move = 0;
-            let holes = board.count_hole();
+            let holes = raw_board.count_hole();
             let depth = if holes <= 14 { 14 } else { 5 };
 
             while moves != 0 {

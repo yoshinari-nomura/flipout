@@ -46,10 +46,6 @@ impl UiBoard {
         self.board.count_black()
     }
 
-    pub fn count_hole(&self) -> u32 {
-        self.board.count_hole()
-    }
-
     pub fn count_white(&self) -> u32 {
         self.board.count_white()
     }

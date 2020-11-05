@@ -90,40 +90,14 @@ impl Game {
 
     fn update_screen_with_animation(&self, reversed: u64) {
         let board = &self.board;
-        let raw_board = self.board.raw_board();
-        let hint = board.legal_moves();
-
         message!("black", "{}", board.count_black());
         message!("white", "{}", board.count_white());
 
-        let color = if board.turn() == Turn::White {
-            "white"
-        } else {
-            "black"
-        };
-
-        for y in 0..8 {
-            for x in 0..8 {
-                let pos = (1 << 63) >> (y * 8 + x);
-                if pos & raw_board.black != 0 {
-                    if pos & reversed != 0 && board.turn() == Turn::White {
-                        screen_flip_to("black", x, y, 0);
-                    } else {
-                        screen_put_stone("black", x, y);
-                    }
-                } else if pos & raw_board.white != 0 {
-                    if pos & reversed != 0 && board.turn() == Turn::Black {
-                        screen_flip_to("white", x, y, 0);
-                    } else {
-                        screen_put_stone("white", x, y);
-                    }
-                } else {
-                    screen_remove_stone(x, y);
-                }
-                if pos & hint != 0 {
-                    screen_put_hint(color, x, y);
-                }
-            }
+        for i in 0..64 {
+            let (x, y) = (i % 8, i / 8);
+            let pos = (1 << 63) >> i;
+            let (opcode, color) = self.operation_at(pos, reversed);
+            screen_update_grid(opcode, color, x, y);
         }
     }
 

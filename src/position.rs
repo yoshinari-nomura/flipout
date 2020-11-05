@@ -5,9 +5,7 @@ use std::fmt;
 use std::str::FromStr;
 
 #[derive(PartialEq, Debug)]
-pub struct Position {
-    pos: BitBoard,
-}
+pub struct Position(BitBoard);
 
 impl FromStr for Position {
     type Err = ();
@@ -23,9 +21,7 @@ impl FromStr for Position {
         let row: i32 = (ascii[1] as i32) - ('1' as i32);
 
         if 0 <= col && col <= 7 && 0 <= row && row <= 7 {
-            Ok(Position {
-                pos: (1 << 63) >> (row * 8 + col),
-            })
+            Ok(Position((1 << 63) >> (row * 8 + col)))
         } else {
             Err(())
         }
@@ -45,9 +41,7 @@ impl Position {
         let row: i32 = (ascii[1] as i32) - ('1' as i32);
 
         if 0 <= col && col <= 7 && 0 <= row && row <= 7 {
-            Some(Position {
-                pos: (1 << 63) >> (row * 8 + col),
-            })
+            Some(Position((1 << 63) >> (row * 8 + col)))
         } else {
             None
         }
@@ -55,23 +49,21 @@ impl Position {
 
     pub fn from_xy(x: i32, y: i32) -> Option<Self> {
         if 0 <= x && x <= 7 && 0 <= y && y <= 7 {
-            Some(Position {
-                pos: (1 << 63) >> (y * 8 + x),
-            })
+            Some(Position((1 << 63) >> (y * 8 + x)))
         } else {
             None
         }
     }
 
     pub fn as_bitboard(&self) -> BitBoard {
-        self.pos
+        self.0
     }
 
     pub fn from_u64(position: u64) -> Option<Self> {
         if position.count_ones() != 1 {
             None
         } else {
-            Some(Position { pos: position })
+            Some(Position(position))
         }
     }
 }
@@ -87,7 +79,7 @@ impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let row: Vec<char> = "12345678".chars().collect();
         let col: Vec<char> = "abcdefgh".chars().collect();
-        let num = self.pos.leading_zeros();
+        let num = self.0.leading_zeros();
         write!(f, "{}{}", col[(num % 8) as usize], row[(num / 8) as usize])?;
         Ok(())
     }

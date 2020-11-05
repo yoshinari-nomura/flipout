@@ -10,6 +10,7 @@ pub type Positions = u64;
 
 pub mod bitboard;
 pub mod board;
+pub mod dumb_screen;
 pub mod game;
 pub mod minimax;
 pub mod player;

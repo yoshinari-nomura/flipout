@@ -1,6 +1,7 @@
 //! flipout is a reversi (Othello) implementation in Rust
 //!
 
+use flipout::dumb_screen::*;
 use flipout::player::*;
 use flipout::ui_board::UiBoard;
 use std::io::{self, BufReader};
@@ -31,28 +32,6 @@ impl Config {
     }
 }
 
-struct DumbScreen();
-
-impl DumbScreen {
-    pub fn new() -> Self {
-        DumbScreen()
-    }
-
-    pub fn update_screen(&self, board: &UiBoard) {
-        Self::clear_screen();
-        print!("{}", board);
-    }
-
-    fn clear_screen() {
-        print!("\x1b[2J");
-        Self::locate(1, 1);
-    }
-
-    fn locate(x: u32, y: u32) {
-        print!("\x1b[{};{}H", x, y);
-    }
-}
-
 fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Player>) {
     let screen = DumbScreen::new();
     screen.update_screen(&board);
@@ -68,8 +47,8 @@ fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Playe
 
         match action {
             Action::GiveUp => break,
-            Action::Pass => board.pass(),
-            Action::Move(mov) => board.put_stone(mov),
+            Action::Pass => board.pass().is_ok(),
+            Action::Move(mov) => board.put_stone(mov).is_ok(),
         };
         screen.update_screen(&board);
 

@@ -13,7 +13,6 @@ pub enum Action {
 
 pub trait Player {
     fn action(&mut self, board: &UiBoard) -> Action;
-    /*    fn update(&self, _board: &UiBoard) {} */
 }
 
 pub struct HumanPlayer {
@@ -51,15 +50,6 @@ impl CleverRobotPlayer {
 impl HumanPlayer {
     pub fn new(tty: Box<dyn std::io::BufRead>) -> Self {
         HumanPlayer { tty }
-    }
-
-    fn clear_screen() {
-        print!("\x1b[2J");
-        HumanPlayer::locate(1, 1);
-    }
-
-    fn locate(x: u32, y: u32) {
-        print!("\x1b[{};{}H", x, y);
     }
 }
 
@@ -111,8 +101,8 @@ impl Player for CleverRobotPlayer {
 impl Player for HumanPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
         loop {
-            HumanPlayer::clear_screen();
-            print!("{}", board);
+            // HumanPlayer::clear_screen();
+            // print!("{}", board);
 
             if board.turn() == Turn::Black {
                 print!("Black: ");
@@ -132,15 +122,8 @@ impl Player for HumanPlayer {
             } else if let Ok(pos) = Position::from_str(&line) {
                 return Action::Move(pos.as_bitboard());
             } else {
-                println!("Invalid command '{}'", &line);
+                print!("Invalid '{}' ", &line);
             }
         }
     }
-
-    /*
-    fn update(&self, board: &UiBoard) {
-        HumanPlayer::clear_screen();
-        print!("{}", board);
-    }
-    */
 }

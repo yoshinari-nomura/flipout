@@ -2,7 +2,6 @@
 //!
 
 use flipout::player::*;
-use flipout::position::Position;
 use flipout::ui_board::UiBoard;
 use std::io::{self, BufReader};
 use std::{env, process};
@@ -32,7 +31,32 @@ impl Config {
     }
 }
 
+struct DumbScreen();
+
+impl DumbScreen {
+    pub fn new() -> Self {
+        DumbScreen()
+    }
+
+    pub fn update_screen(&self, board: &UiBoard) {
+        Self::clear_screen();
+        print!("{}", board);
+    }
+
+    fn clear_screen() {
+        print!("\x1b[2J");
+        Self::locate(1, 1);
+    }
+
+    fn locate(x: u32, y: u32) {
+        print!("\x1b[{};{}H", x, y);
+    }
+}
+
 fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Player>) {
+    let screen = DumbScreen::new();
+    screen.update_screen(&board);
+
     loop {
         let player = if board.is_black_turn() {
             &mut black
@@ -42,36 +66,17 @@ fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Playe
 
         let action = player.action(&board);
 
-        print!("{}", board);
-        print!(
-            "Player {}: ",
-            if board.is_black_turn() {
-                "black"
-            } else {
-                "white"
-            },
-        );
-
         match action {
             Action::GiveUp => break,
-            Action::Pass => {
-                if board.pass().is_ok() {
-                    println!("pass");
-                }
-            }
-            Action::Move(mov) => {
-                println!("move {}", Position::from_u64(mov).unwrap());
-                if board.put_stone(mov).is_ok() {}
-            }
-        }
-
-        // player.update(&board);
+            Action::Pass => board.pass(),
+            Action::Move(mov) => board.put_stone(mov),
+        };
+        screen.update_screen(&board);
 
         if board.is_game_over() {
             break;
         }
     }
-    print!("{}", board);
 }
 
 fn main() {

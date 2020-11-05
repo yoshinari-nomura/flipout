@@ -25,11 +25,14 @@ impl UiBoard {
         }
     }
 
+    ////////////////////////////////////////////////////////////////
+    // Mutable functions
+
     pub fn set_reverse_video(&mut self) {
         self.reverse_video = true;
     }
 
-    pub fn put_stone(&mut self, mov: Move) -> Result<&mut Self, &str> {
+    pub fn put_stone(&mut self, mov: Move) -> Result<&Self, &str> {
         if self.board.is_legal_move(mov) {
             self.board.put_stone(mov);
             Ok(self)
@@ -38,9 +41,24 @@ impl UiBoard {
         }
     }
 
+    pub fn pass(&mut self) -> Result<&Self, &str> {
+        if self.board.legal_moves() == 0 {
+            self.board.pass();
+            Ok(self)
+        } else {
+            Err("Cannot pass")
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // Expose primitive interface
+
     pub fn raw_board(&self) -> &Board {
         &self.board
     }
+
+    ////////////////////////////////////////////////////////////////
+    // Count and examine stones
 
     pub fn count_black(&self) -> u32 {
         self.board.count_black()
@@ -50,49 +68,8 @@ impl UiBoard {
         self.board.count_white()
     }
 
-    pub fn reversible_stones(&self, mov: Move) -> BitBoard {
-        self.board.reversible_stones(mov)
-    }
-
-    pub fn legal_moves(&self) -> Moves {
-        self.board.legal_moves()
-    }
-
-    pub fn legal_moves_as_vec(&self) -> Vec<Move> {
-        self.board.legal_moves_as_vec()
-    }
-
-    pub fn turn(&self) -> Turn {
-        self.board.turn
-    }
-
-    pub fn pass(&mut self) -> Result<&mut Self, &str> {
-        if self.board.legal_moves() == 0 {
-            self.board.pass();
-            Ok(self)
-        } else {
-            Err("Cannot pass")
-        }
-    }
-
-    pub fn is_game_over(&self) -> bool {
-        self.board.is_game_over()
-    }
-
-    pub fn is_black_turn(&self) -> bool {
-        self.board.is_black_turn()
-    }
-
-    fn is_black_at(&self, pos: u64) -> bool {
-        self.board.black & pos != 0
-    }
-
-    fn is_white_at(&self, pos: u64) -> bool {
-        self.board.white & pos != 0
-    }
-
-    pub fn is_legal_move(&self, mov: u64) -> bool {
-        self.board.is_legal_move(mov)
+    pub fn count_hole(&self) -> u32 {
+        self.board.count_hole()
     }
 
     pub fn color_at(&self, pos: u64) -> Color {
@@ -103,6 +80,51 @@ impl UiBoard {
         } else {
             Color::Empty
         }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // Game rules
+
+    pub fn is_game_over(&self) -> bool {
+        self.board.is_game_over()
+    }
+
+    pub fn is_legal_move(&self, mov: u64) -> bool {
+        self.board.is_legal_move(mov)
+    }
+
+    pub fn legal_moves(&self) -> Moves {
+        self.board.legal_moves()
+    }
+
+    pub fn legal_moves_as_vec(&self) -> Vec<Move> {
+        self.board.legal_moves_as_vec()
+    }
+
+    pub fn reversible_stones(&self, mov: Move) -> BitBoard {
+        self.board.reversible_stones(mov)
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // Current status
+
+    pub fn turn(&self) -> Turn {
+        self.board.turn
+    }
+
+    pub fn is_black_turn(&self) -> bool {
+        self.board.is_black_turn()
+    }
+
+    ////////////////////////////////////////////////////////////////
+    // Private
+
+    fn is_black_at(&self, pos: u64) -> bool {
+        self.board.black & pos != 0
+    }
+
+    fn is_white_at(&self, pos: u64) -> bool {
+        self.board.white & pos != 0
     }
 }
 

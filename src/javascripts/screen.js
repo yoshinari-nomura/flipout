@@ -5,6 +5,7 @@ const debug = false;
 ////////////////////////////////////////////////////////////////
 
 const dimension = 80;
+const offset = 40;
 
 class Sprite {
   constructor(image_path) {
@@ -44,8 +45,8 @@ let ctx = document.getElementById('canvas').getContext('2d');
 
 function grid_to_point(x, y) {
   return {
-    x: x * dimension,
-    y: y * dimension
+    x: x * dimension + offset,
+    y: y * dimension + offset
   }
 }
 

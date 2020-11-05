@@ -43,6 +43,11 @@
         border-radius: 5px;
       }
 
+      canvas {
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+      }
+
       <!-- Thanks to https://saruwakakun.com/html-css/reference/buttons -->
       .btn-square-pop:active {
         border-bottom: solid 2px #fd9535;
@@ -91,7 +96,7 @@
     <h3>
       flipout &nbsp;&nbsp; fork on <a href="https://github.com/yoshinari-nomura/flipout">GitHub</a>
     </h3>
-    <canvas id="canvas" tabindex="1" width="642" height="642" style="background: url('assets/background.png')"></canvas>
+    <canvas id="canvas" tabindex="1" width="682" height="682" style="background: url('assets/background.png')"></canvas>
     <div>
       <a href="#" id="pass" class="btn-square">PASS</a>
       <span class="black-stone" id="black"></span>

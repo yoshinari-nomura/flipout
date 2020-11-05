@@ -4,9 +4,10 @@ import { Game, Turn } from "flipout";
 
 function event_to_grid(e) {
   const dimension = 80;
+  const offset = 40;
   return {
-    x: Math.floor(e.offsetX / dimension),
-    y: Math.floor(e.offsetY / dimension)
+    x: Math.floor((e.offsetX - offset) / dimension),
+    y: Math.floor((e.offsetY - offset) / dimension)
   }
 }
 

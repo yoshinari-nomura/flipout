@@ -130,41 +130,38 @@ impl UiBoard {
 
 impl fmt::Display for UiBoard {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut black = self.board.black;
-        let mut white = self.board.white;
-        let mut hint = self.board.legal_moves();
-        let black_char = if self.reverse_video { "○" } else { "●" };
-        let white_char = if self.reverse_video { "●" } else { "○" };
+        let black = if self.reverse_video { "○" } else { "●" };
+        let white = if self.reverse_video { "●" } else { "○" };
+        let turn = if self.is_black_turn() { black } else { white };
 
-        let mask: u64 = 1 << 63;
+        write!(f, "  ＡＢＣＤＥＦＧＨ")?;
 
-        writeln!(f, "  ａｂｃｄｅｆｇｈ")?;
-
-        for row in 0..8 {
-            write!(f, "{} ", row + 1)?;
-
-            for _col in 0..8 {
-                let stone = if black & mask != 0 {
-                    black_char
-                } else if white & mask != 0 {
-                    white_char
-                } else if hint & mask != 0 {
-                    "＊"
-                } else {
-                    "・"
-                };
-                write!(f, "{}", stone)?;
-                black <<= 1;
-                white <<= 1;
-                hint <<= 1;
+        for i in 0..64 {
+            if i % 8 == 0 {
+                write!(f, "\n{} ", i / 8 + 1)?;
             }
-            writeln!(f)?;
+            let pos = (1 << 63) >> i;
+            let grid_char = match self.color_at(pos) {
+                Color::White => white,
+                Color::Black => black,
+                Color::Empty => {
+                    if self.is_legal_move(pos) {
+                        "＊"
+                    } else {
+                        "・"
+                    }
+                }
+            };
+            write!(f, "{}", grid_char)?;
         }
         writeln!(
             f,
-            "Black: {} White: {}",
-            self.board.count_black(),
-            self.board.count_white()
+            "\n{}:{} {}:{} Turn:{}",
+            black,
+            self.count_black(),
+            white,
+            self.count_white(),
+            turn
         )?;
         Ok(())
     }

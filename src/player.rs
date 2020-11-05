@@ -1,4 +1,3 @@
-use crate::board::Turn;
 use crate::minimax;
 use crate::position::Position;
 use crate::ui_board::UiBoard;
@@ -99,16 +98,9 @@ impl Player for CleverRobotPlayer {
 }
 
 impl Player for HumanPlayer {
-    fn action(&mut self, board: &UiBoard) -> Action {
+    fn action(&mut self, _board: &UiBoard) -> Action {
         loop {
-            // HumanPlayer::clear_screen();
-            // print!("{}", board);
-
-            if board.turn() == Turn::Black {
-                print!("Black: ");
-            } else {
-                print!("White: ");
-            }
+            print!("Move: ");
             io::stdout().flush().unwrap();
 
             let mut line = String::new();

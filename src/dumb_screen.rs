@@ -1,20 +1,16 @@
 use crate::ui_board::UiBoard;
 
-pub struct DumbScreen();
-
-impl Default for DumbScreen {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+pub struct DumbScreen(bool);
 
 impl DumbScreen {
-    pub fn new() -> Self {
-        DumbScreen()
+    pub fn new(dumb: bool) -> Self {
+        DumbScreen(dumb)
     }
 
     pub fn update_screen(&self, board: &UiBoard) {
-        Self::clear_screen();
+        if !self.0 {
+            Self::clear_screen();
+        }
         print!("{}", board);
     }
 

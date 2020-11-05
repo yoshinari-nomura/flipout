@@ -32,8 +32,12 @@ impl Config {
     }
 }
 
-fn play(mut board: UiBoard, mut black: Box<dyn Player>, mut white: Box<dyn Player>) {
-    let screen = DumbScreen::new();
+fn play(
+    mut board: UiBoard,
+    screen: DumbScreen,
+    mut black: Box<dyn Player>,
+    mut white: Box<dyn Player>,
+) {
     screen.update_screen(&board);
 
     loop {
@@ -73,7 +77,7 @@ fn main() {
     }
 
     let board = UiBoard::new(cnf.reverse_video);
-
+    let screen = DumbScreen::new(cnf.auto_demo);
     let black: Box<dyn Player> = if cnf.auto_demo {
         Box::new(RobotPlayer::new())
     } else {
@@ -81,5 +85,5 @@ fn main() {
     };
     let white: Box<dyn Player> = Box::new(CleverRobotPlayer::new());
 
-    play(board, black, white);
+    play(board, screen, black, white);
 }

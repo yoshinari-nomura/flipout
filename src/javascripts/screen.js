@@ -53,6 +53,23 @@ function grid_to_point(x, y) {
 /// export functions to WASM
 ////////////////////////////////////////////////////////////////
 
+export function screen_update_grid(opcode, color, x, y) {
+  switch (opcode) {
+  case "put":
+    screen_put_stone(color, x, y);
+    break;
+  case "remove":
+    screen_remove_stone(x, y);
+    break;
+  case "flip":
+    screen_flip_to(color, x, y, 0);
+    break;
+  case "hint":
+    screen_put_hint(color, x, y);
+    break;
+  }
+}
+
 export function screen_put_stone(color, x, y) {
   let frame = (color == "black" ? 0 : 15);
   let point = grid_to_point(x, y);

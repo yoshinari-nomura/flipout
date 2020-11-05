@@ -126,11 +126,35 @@ impl Game {
             }
         }
     }
+
+    fn operation_at(&self, pos: Move, flipped: u64) -> (&str, &str) {
+        let grid_color = match self.board.color_at(pos) {
+            Color::White => "white",
+            Color::Black => "black",
+            Color::Empty => "empty",
+        };
+
+        let hint_color = match self.board.turn() {
+            Turn::White => "white",
+            Turn::Black => "black",
+        };
+
+        if self.board.is_legal_move(pos) {
+            ("hint", hint_color)
+        } else if pos & flipped != 0 {
+            ("flip", grid_color)
+        } else if grid_color == "empty" {
+            ("remove", "")
+        } else {
+            ("put", grid_color)
+        }
+    }
 }
 
 // #[wasm_bindgen]
 #[wasm_bindgen(module = "/src/javascripts/screen.js")]
 extern "C" {
+    pub fn screen_update_grid(op: &str, color: &str, x: i32, y: i32);
     pub fn screen_put_stone(color: &str, x: i32, y: i32);
     pub fn screen_put_hint(color: &str, x: i32, y: i32);
     pub fn screen_remove_stone(x: i32, y: i32);

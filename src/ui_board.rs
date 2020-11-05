@@ -5,6 +5,12 @@ pub type Move = u64;
 pub type Moves = u64;
 pub type BitBoard = u64;
 
+pub enum Color {
+    Black,
+    White,
+    Empty,
+}
+
 pub struct UiBoard {
     board: Board,
     reverse_video: bool,
@@ -79,6 +85,28 @@ impl UiBoard {
 
     pub fn is_black_turn(&self) -> bool {
         self.board.is_black_turn()
+    }
+
+    fn is_black_at(&self, pos: u64) -> bool {
+        self.board.black & pos != 0
+    }
+
+    fn is_white_at(&self, pos: u64) -> bool {
+        self.board.white & pos != 0
+    }
+
+    pub fn is_legal_move(&self, mov: u64) -> bool {
+        self.board.is_legal_move(mov)
+    }
+
+    pub fn color_at(&self, pos: u64) -> Color {
+        if self.is_black_at(pos) {
+            Color::Black
+        } else if self.is_white_at(pos) {
+            Color::White
+        } else {
+            Color::Empty
+        }
     }
 }
 

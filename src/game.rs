@@ -89,19 +89,18 @@ impl Game {
                 let reversible = self.board.reversible_stones(mov);
                 if self.board.put_stone(mov).is_ok() {
                     message!(name, "Move {}", Position::from_u64(mov).unwrap());
+                    if let Some(next_turn) = self.board.whatnow() {
+                        if next_turn == turn {
+                            let name = if turn.opposit() == Turn::Black {
+                                "you"
+                            } else {
+                                "com"
+                            };
+                            message!(name, "Pass");
+                        }
+                    }
                     self.update_screen_with_animation(reversible);
                 }
-            }
-        }
-
-        if let Some(next_turn) = self.board.whatnow() {
-            if next_turn == turn {
-                let name = if turn.opposit() == Turn::Black {
-                    "you"
-                } else {
-                    "com"
-                };
-                message!(name, "Pass");
             }
         }
         self.board.whatnow()

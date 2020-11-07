@@ -159,7 +159,7 @@ impl fmt::Display for UiBoard {
         let white = if self.reverse_video { "●" } else { "○" };
         let turn = if self.is_black_turn() { black } else { white };
 
-        write!(f, "  ＡＢＣＤＥＦＧＨ")?;
+        write!(f, "  ａｂｃｄｅｆｇｈ")?;
 
         for i in 0..64 {
             if i % 8 == 0 {

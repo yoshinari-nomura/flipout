@@ -81,7 +81,7 @@ impl Player for RobotPlayer {
 impl Player for CleverRobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
         let raw_board = board.raw_board();
-        let mut moves = board.legal_moves();
+        let mut moves = raw_board.legal_moves();
         let turn = raw_board.turn;
 
         if moves == 0 {

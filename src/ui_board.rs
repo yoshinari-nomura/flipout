@@ -89,10 +89,6 @@ impl UiBoard {
         self.board.count_white()
     }
 
-    pub fn count_hole(&self) -> u32 {
-        self.board.count_hole()
-    }
-
     pub fn color_at(&self, pos: u64) -> Color {
         if self.is_black_at(pos) {
             Color::Black
@@ -118,7 +114,7 @@ impl UiBoard {
         self.board.is_legal_move(mov)
     }
 
-    pub fn legal_moves(&self) -> Moves {
+    fn legal_moves(&self) -> Moves {
         self.board.legal_moves()
     }
 

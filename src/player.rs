@@ -1,6 +1,7 @@
 use crate::minimax;
 use crate::position::Position;
 use crate::ui_board::UiBoard;
+use std::fmt;
 use std::io::{self, BufRead, Write};
 use std::str::FromStr;
 
@@ -8,6 +9,17 @@ pub enum Action {
     Move(u64),
     Pass,
     GiveUp,
+}
+
+impl fmt::Display for Action {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Action::Move(pos) => write!(f, "Move {}", Position::from_u64(*pos).unwrap())?,
+            Action::Pass => write!(f, "Pass")?,
+            Action::GiveUp => write!(f, "GiveUp")?,
+        }
+        Ok(())
+    }
 }
 
 pub trait Player {

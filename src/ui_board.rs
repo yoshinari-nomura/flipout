@@ -14,6 +14,7 @@ pub enum Color {
 pub struct UiBoard {
     board: Board,
     reverse_video: bool,
+    whatnow: Option<Turn>,
 }
 
 impl UiBoard {
@@ -22,6 +23,7 @@ impl UiBoard {
         UiBoard {
             board,
             reverse_video,
+            whatnow: Some(Turn::Black),
         }
     }
 
@@ -33,8 +35,12 @@ impl UiBoard {
     }
 
     pub fn put_stone(&mut self, mov: Move) -> Result<&Self, &str> {
-        if self.board.is_legal_move(mov) {
+        if self.is_game_over() {
+            return Err("Game over");
+        }
+        if self.is_legal_move(mov) {
             self.board.put_stone(mov);
+            self.update_satus();
             Ok(self)
         } else {
             Err("Invalid move")
@@ -42,12 +48,27 @@ impl UiBoard {
     }
 
     pub fn pass(&mut self) -> Result<&Self, &str> {
-        if self.board.legal_moves() == 0 {
+        if self.is_game_over() {
+            return Err("Game over");
+        }
+        if self.legal_moves() == 0 {
             self.board.pass();
+            self.update_satus();
             Ok(self)
         } else {
-            Err("Cannot pass")
+            Err("Can't pass")
         }
+    }
+
+    fn update_satus(&mut self) {
+        if self.is_game_over() {
+            self.whatnow = None;
+            return;
+        }
+        if self.legal_moves() == 0 {
+            self.board.pass();
+        }
+        self.whatnow = self.turn();
     }
 
     ////////////////////////////////////////////////////////////////
@@ -85,6 +106,10 @@ impl UiBoard {
     ////////////////////////////////////////////////////////////////
     // Game rules
 
+    pub fn whatnow(&self) -> Option<Turn> {
+        self.whatnow
+    }
+
     pub fn is_game_over(&self) -> bool {
         self.board.is_game_over()
     }
@@ -108,8 +133,12 @@ impl UiBoard {
     ////////////////////////////////////////////////////////////////
     // Current status
 
-    pub fn turn(&self) -> Turn {
-        self.board.turn
+    pub fn turn(&self) -> Option<Turn> {
+        if self.is_game_over() {
+            None
+        } else {
+            Some(self.board.turn)
+        }
     }
 
     pub fn is_black_turn(&self) -> bool {

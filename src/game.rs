@@ -33,20 +33,33 @@ impl Game {
     pub fn ui_move(&mut self, turn: Turn, x: i32, y: i32) -> bool {
         if let Some(pos) = Position::from_xy(x, y) {
             let action = Action::Move(pos.as_bitboard());
-            return self.update(turn, action);
+
+            return match self.update(turn, action) {
+                Some(t) if t == turn => false, // again, still your turn
+                Some(_) => true,               // done, turn to AI
+                None => false,                 // gameover, don't handover
+            };
         }
-        false
+        false // pos is invalid, try again.
     }
 
     pub fn ui_pass(&mut self, turn: Turn) -> bool {
-        let action = Action::Pass;
-        self.update(turn, action)
+        match self.update(turn, Action::Pass) {
+            Some(t) if t == turn => false, // again, still your turn
+            Some(_) => true,               // done, turn to AI
+            None => false,                 // gameover, don't handover
+        }
     }
 
     pub fn ai_action(&mut self, turn: Turn) -> bool {
         let board = &mut self.board;
         let action = self.ai.action(board);
-        self.update(turn, action)
+
+        match self.update(turn, action) {
+            Some(t) if t == turn => false, // again, still your turn
+            Some(_) => true,               // done, turn to UI
+            None => true,                  // gameover, turn to UI
+        }
     }
 
     pub fn update_screen(&self) {
@@ -55,37 +68,43 @@ impl Game {
 }
 
 impl Game {
-    fn update(&mut self, turn: Turn, action: Action) -> bool {
-        let board = &mut self.board;
-        let name = if turn == Turn::Black { "you" } else { "com" };
-
-        if board.turn() != turn {
-            return false;
+    fn update(&mut self, turn: Turn, action: Action) -> Option<Turn> {
+        if self.board.whatnow() != Some(turn) {
+            return self.board.whatnow();
         }
+
+        let name = if turn == Turn::Black { "you" } else { "com" };
 
         match action {
             Action::GiveUp => message!(name, "Give up"),
             Action::Pass => {
-                if board.pass().is_ok() {
+                if self.board.pass().is_ok() {
                     message!(name, "Pass");
                     self.update_screen();
                 } else {
                     message!(name, "Can't pass");
-                    return false;
                 }
             }
             Action::Move(mov) => {
-                let reversible = board.reversible_stones(mov);
-                if board.put_stone(mov).is_ok() {
+                let reversible = self.board.reversible_stones(mov);
+                if self.board.put_stone(mov).is_ok() {
                     message!(name, "Move {}", Position::from_u64(mov).unwrap());
                     self.update_screen_with_animation(reversible);
-                } else {
-                    // message!(name, "{}", e);
-                    return false;
                 }
             }
         }
-        true
+
+        if let Some(next_turn) = self.board.whatnow() {
+            if next_turn == turn {
+                let name = if turn.opposit() == Turn::Black {
+                    "you"
+                } else {
+                    "com"
+                };
+                message!(name, "Pass");
+            }
+        }
+        self.board.whatnow()
     }
 
     fn update_screen_with_animation(&self, reversed: u64) {
@@ -109,8 +128,9 @@ impl Game {
         };
 
         let hint_color = match self.board.turn() {
-            Turn::White => "white",
-            Turn::Black => "black",
+            Some(Turn::White) => "white",
+            Some(Turn::Black) => "black",
+            None => "empty", // XXX it works, but should be cared in screen.js
         };
 
         if self.board.is_legal_move(pos) {

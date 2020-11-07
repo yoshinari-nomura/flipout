@@ -37,7 +37,7 @@ function handle_pass(ev, game) {
   }
 
   if (game.ui_pass(Turn.Black)) {
-    setTimeout(() => game.ai_action(Turn.White), 2000);
+    setTimeout(() => ai_action(), 2000);
   }
 }
 
@@ -49,7 +49,13 @@ function handle_click(ev, game) {
   }
 
   if (game.ui_move(Turn.Black, grid.x, grid.y)) {
-    setTimeout(() => game.ai_action(Turn.White), 2000);
+    setTimeout(() => ai_action(), 2000);
+  }
+}
+
+function ai_action() {
+  if (!game.ai_action(Turn.White)) {
+    setTimeout(() => ai_action(Turn.White), 2000);
   }
 }
 

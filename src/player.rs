@@ -70,7 +70,7 @@ impl Player for CleverRobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
         let raw_board = board.raw_board();
         let mut moves = board.legal_moves();
-        let turn = board.turn();
+        let turn = raw_board.turn;
 
         if moves == 0 {
             Action::Pass

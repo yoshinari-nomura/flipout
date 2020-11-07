@@ -79,7 +79,7 @@ impl Position {
 impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let row: Vec<char> = "12345678".chars().collect();
-        let col: Vec<char> = "ABCDEFGH".chars().collect();
+        let col: Vec<char> = "abcdefgh".chars().collect();
         write!(f, "{}{}", col[self.x() as usize], row[self.y() as usize])?;
         Ok(())
     }
@@ -118,8 +118,8 @@ mod test {
     fn position_from_str() {
         for (ci, cc) in "abcdefgh".chars().enumerate() {
             for (ri, rc) in "12345678".chars().enumerate() {
-                let pos1 = Position::from_str(&format!("{}{}", cc, rc));
-                let pos2 = Position::from_u64((1 << 63) >> (ri * 8 + ci));
+                let pos1 = Position::from_str(&format!("{}{}", cc, rc)).unwrap();
+                let pos2 = Position::from_u64((1 << 63) >> (ri * 8 + ci)).unwrap();
                 assert_eq!(pos1, pos2);
             }
         }

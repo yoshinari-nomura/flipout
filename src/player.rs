@@ -6,7 +6,7 @@ use std::io::{self, BufRead, Write};
 use std::str::FromStr;
 
 pub enum Action {
-    Move(u64),
+    Move(Position),
     Pass,
     GiveUp,
 }
@@ -14,7 +14,7 @@ pub enum Action {
 impl fmt::Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Action::Move(pos) => write!(f, "Move {}", Position::from_bits(*pos).unwrap())?,
+            Action::Move(pos) => write!(f, "Move {}", pos)?,
             Action::Pass => write!(f, "Pass")?,
             Action::GiveUp => write!(f, "GiveUp")?,
         }
@@ -73,7 +73,7 @@ impl Player for RobotPlayer {
         } else {
             let rnd: usize = rand::random();
             let mov = vec[rnd % vec.len()];
-            Action::Move(mov)
+            Action::Move(Position::new(mov))
         }
     }
 }
@@ -104,7 +104,7 @@ impl Player for CleverRobotPlayer {
                 }
                 moves &= !mov;
             }
-            Action::Move(best_move)
+            Action::Move(Position::new(best_move))
         }
     }
 }
@@ -124,7 +124,7 @@ impl Player for HumanPlayer {
             } else if &line == "giveup" {
                 return Action::GiveUp;
             } else if let Ok(pos) = Position::from_str(&line) {
-                return Action::Move(pos.as_bits());
+                return Action::Move(pos);
             } else {
                 print!("Invalid '{}' ", &line);
             }

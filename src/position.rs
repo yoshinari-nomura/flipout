@@ -29,6 +29,10 @@ impl FromStr for Position {
 }
 
 impl Position {
+    pub fn new(position: u64) -> Self {
+        Position(position)
+    }
+
     pub fn from_xy(x: i32, y: i32) -> Option<Self> {
         if 0 <= x && x <= 7 && 0 <= y && y <= 7 {
             Some(Position((1 << 63) >> (y * 8 + x)))

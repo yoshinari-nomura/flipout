@@ -52,7 +52,7 @@ fn play(
         match action {
             Action::GiveUp => break,
             Action::Pass => board.pass().is_ok(),
-            Action::Move(mov) => board.put_stone(mov).is_ok(),
+            Action::Move(mov) => board.put_stone(mov.as_bits()).is_ok(),
         };
         screen.update_screen(&board);
 

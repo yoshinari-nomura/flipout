@@ -32,7 +32,7 @@ impl Game {
 
     pub fn ui_move(&mut self, turn: Turn, x: i32, y: i32) -> bool {
         if let Some(pos) = Position::from_xy(x, y) {
-            let action = Action::Move(pos.as_bitboard());
+            let action = Action::Move(pos.as_bits());
 
             return match self.update(turn, action) {
                 Some(t) if t == turn => false, // again, still your turn
@@ -88,7 +88,7 @@ impl Game {
             Action::Move(mov) => {
                 let reversible = self.board.reversible_stones(mov);
                 if self.board.put_stone(mov).is_ok() {
-                    message!(name, "Move {}", Position::from_u64(mov).unwrap());
+                    message!(name, "Move {}", Position::from_bits(mov).unwrap());
                     if let Some(next_turn) = self.board.whatnow() {
                         if next_turn == turn {
                             let name = if turn.opposit() == Turn::Black {

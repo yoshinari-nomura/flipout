@@ -4,7 +4,7 @@ use crate::BitBoard;
 use std::fmt;
 use std::str::FromStr;
 
-#[derive(PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Position(u64);
 
 impl FromStr for Position {
@@ -29,24 +29,6 @@ impl FromStr for Position {
 }
 
 impl Position {
-    /// XXX Result<Position, PositionParseErr> is suitable
-    pub fn from_str_opt(position_str: &str) -> Option<Self> {
-        let ascii = position_str.as_bytes();
-
-        if ascii.len() != 2 {
-            return None;
-        }
-
-        let col: i32 = (ascii[0] as i32) - ('a' as i32);
-        let row: i32 = (ascii[1] as i32) - ('1' as i32);
-
-        if 0 <= col && col <= 7 && 0 <= row && row <= 7 {
-            Some(Position((1 << 63) >> (row * 8 + col)))
-        } else {
-            None
-        }
-    }
-
     pub fn from_xy(x: i32, y: i32) -> Option<Self> {
         if 0 <= x && x <= 7 && 0 <= y && y <= 7 {
             Some(Position((1 << 63) >> (y * 8 + x)))
@@ -55,11 +37,11 @@ impl Position {
         }
     }
 
-    pub fn as_bitboard(&self) -> BitBoard {
+    pub fn as_bits(&self) -> BitBoard {
         self.0
     }
 
-    pub fn from_u64(position: u64) -> Option<Self> {
+    pub fn from_bits(position: u64) -> Option<Self> {
         if position.count_ones() != 1 {
             None
         } else {
@@ -88,7 +70,8 @@ impl fmt::Display for Position {
 ////////////////////////////////////////////////////////////////
 // Positions
 
-struct Positions(u64);
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct Positions(u64);
 
 impl Positions {
     pub fn new(bits: u64) -> Self {
@@ -119,7 +102,7 @@ mod test {
         for (ci, cc) in "abcdefgh".chars().enumerate() {
             for (ri, rc) in "12345678".chars().enumerate() {
                 let pos1 = Position::from_str(&format!("{}{}", cc, rc)).unwrap();
-                let pos2 = Position::from_u64((1 << 63) >> (ri * 8 + ci)).unwrap();
+                let pos2 = Position::from_bits((1 << 63) >> (ri * 8 + ci)).unwrap();
                 assert_eq!(pos1, pos2);
             }
         }

@@ -14,7 +14,7 @@ pub enum Action {
 impl fmt::Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Action::Move(pos) => write!(f, "Move {}", Position::from_u64(*pos).unwrap())?,
+            Action::Move(pos) => write!(f, "Move {}", Position::from_bits(*pos).unwrap())?,
             Action::Pass => write!(f, "Pass")?,
             Action::GiveUp => write!(f, "GiveUp")?,
         }
@@ -124,7 +124,7 @@ impl Player for HumanPlayer {
             } else if &line == "giveup" {
                 return Action::GiveUp;
             } else if let Ok(pos) = Position::from_str(&line) {
-                return Action::Move(pos.as_bitboard());
+                return Action::Move(pos.as_bits());
             } else {
                 print!("Invalid '{}' ", &line);
             }

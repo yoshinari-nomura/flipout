@@ -16,6 +16,7 @@ pub mod minimax;
 pub mod player;
 pub mod position;
 pub mod ui_board;
+pub mod wasm_screen;
 
 use wasm_bindgen::prelude::*;
 

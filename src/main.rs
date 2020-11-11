@@ -31,7 +31,7 @@ fn play(mut board: UiBoard, screen: DumbScreen, mut black: impl Player, mut whit
         match action {
             Action::GiveUp => break,
             Action::Pass => board.pass().is_ok(),
-            Action::Move(mov) => board.put_stone(mov.as_bits()).is_ok(),
+            Action::Move(pos) => board.put_stone(pos).is_ok(),
         };
 
         screen.update_screen(&board);

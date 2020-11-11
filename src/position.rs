@@ -1,6 +1,5 @@
 //! Position
 
-use crate::BitBoard;
 use std::fmt;
 use std::str::FromStr;
 
@@ -41,7 +40,7 @@ impl Position {
         }
     }
 
-    pub fn as_bits(&self) -> BitBoard {
+    pub fn as_bits(&self) -> u64 {
         self.0
     }
 
@@ -80,6 +79,22 @@ pub struct Positions(u64);
 impl Positions {
     pub fn new(bits: u64) -> Self {
         Positions(bits)
+    }
+
+    pub fn fill() -> Self {
+        Self::new(0xffff_ffff_ffff_ffff)
+    }
+
+    pub fn empty() -> Self {
+        Self::new(0)
+    }
+
+    pub fn as_bits(&self) -> u64 {
+        self.0
+    }
+
+    pub fn contains(&self, pos: Position) -> bool {
+        pos.0 & self.0 != 0
     }
 }
 

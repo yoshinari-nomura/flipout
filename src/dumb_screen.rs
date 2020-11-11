@@ -1,4 +1,5 @@
 use crate::board::Turn;
+use crate::position::*;
 use crate::ui_board::{Color, UiBoard};
 
 pub struct DumbScreen {
@@ -46,11 +47,11 @@ impl DumbScreen {
                 print!("\n{} ", i / 8 + 1);
             }
             let pos = (1 << 63) >> i;
-            let grid_char = match board.color_at(pos) {
+            let grid_char = match board.color_at(Position::new(pos)) {
                 Color::White => white,
                 Color::Black => black,
                 Color::Empty => {
-                    if board.is_legal_move(pos) {
+                    if board.is_legal_move(Position::new(pos)) {
                         "＊"
                     } else {
                         "・"

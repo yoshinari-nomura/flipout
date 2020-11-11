@@ -2,6 +2,8 @@ use crate::board::*;
 use crate::player::*;
 use crate::position::*;
 use crate::ui_board::*;
+use crate::wasm_screen::*;
+
 use wasm_bindgen::prelude::*;
 
 macro_rules! message {
@@ -13,6 +15,7 @@ macro_rules! message {
 #[wasm_bindgen]
 pub struct Game {
     board: UiBoard,
+    screen: WasmScreen,
     ai: Box<dyn Player>,
 }
 
@@ -27,7 +30,12 @@ impl Game {
     pub fn new() -> Self {
         let ui = UiBoard::new();
         let ai: Box<dyn Player> = Box::new(CleverRobotPlayer::new());
-        Game { board: ui, ai }
+        let screen = WasmScreen::new();
+        Game {
+            board: ui,
+            ai,
+            screen,
+        }
     }
 
     pub fn ui_move(&mut self, turn: Turn, x: i32, y: i32) -> bool {
@@ -63,7 +71,9 @@ impl Game {
     }
 
     pub fn update_screen(&self) {
-        self.update_screen_with_animation(0);
+        let board = &self.board;
+        self.screen
+            .update_screen_with_animation(Positions::empty(), board);
     }
 }
 
@@ -85,10 +95,10 @@ impl Game {
                     message!(name, "Can't pass");
                 }
             }
-            Action::Move(mov) => {
-                let reversible = self.board.reversible_stones(mov.as_bits());
-                if self.board.put_stone(mov.as_bits()).is_ok() {
-                    message!(name, "Move {}", mov);
+            Action::Move(pos) => {
+                let reversible = self.board.reversible_stones(pos);
+                if self.board.put_stone(pos).is_ok() {
+                    message!(name, "Move {}", pos);
                     if let Some(next_turn) = self.board.whatnow() {
                         if next_turn == turn {
                             let name = if turn.opposit() == Turn::Black {
@@ -99,58 +109,16 @@ impl Game {
                             message!(name, "Pass");
                         }
                     }
-                    self.update_screen_with_animation(reversible);
+                    self.screen
+                        .update_screen_with_animation(reversible, &self.board);
                 }
             }
         }
         self.board.whatnow()
     }
-
-    fn update_screen_with_animation(&self, reversed: u64) {
-        let board = &self.board;
-        message!("black", "{}", board.count_black());
-        message!("white", "{}", board.count_white());
-
-        for i in 0..64 {
-            let (x, y) = (i % 8, i / 8);
-            let pos = (1 << 63) >> i;
-            let (opcode, color) = self.operation_at(pos, reversed);
-            screen_update_grid(opcode, color, x, y);
-        }
-    }
-
-    fn operation_at(&self, pos: Move, flipped: u64) -> (&str, &str) {
-        let grid_color = match self.board.color_at(pos) {
-            Color::White => "white",
-            Color::Black => "black",
-            Color::Empty => "empty",
-        };
-
-        let hint_color = match self.board.turn() {
-            Some(Turn::White) => "white",
-            Some(Turn::Black) => "black",
-            None => "empty", // XXX it works, but should be cared in screen.js
-        };
-
-        if self.board.is_legal_move(pos) {
-            ("hint", hint_color)
-        } else if pos & flipped != 0 {
-            ("flip", grid_color)
-        } else if grid_color == "empty" {
-            ("remove", "")
-        } else {
-            ("put", grid_color)
-        }
-    }
 }
 
-// #[wasm_bindgen]
 #[wasm_bindgen(module = "/src/javascripts/screen.js")]
 extern "C" {
-    pub fn screen_update_grid(op: &str, color: &str, x: i32, y: i32);
-    pub fn screen_put_stone(color: &str, x: i32, y: i32);
-    pub fn screen_put_hint(color: &str, x: i32, y: i32);
-    pub fn screen_remove_stone(x: i32, y: i32);
-    pub fn screen_flip_to(color: &str, x: i32, y: i32, delay: i32);
     pub fn screen_show_message(id: &str, message: &JsValue);
 }

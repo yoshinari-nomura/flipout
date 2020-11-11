@@ -1,4 +1,5 @@
 use crate::board::{Board, Turn};
+use crate::position::*;
 use std::fmt;
 
 pub type Move = u64;
@@ -34,12 +35,12 @@ impl UiBoard {
     ////////////////////////////////////////////////////////////////
     // Mutable functions
 
-    pub fn put_stone(&mut self, mov: Move) -> Result<&Self, &str> {
+    pub fn put_stone(&mut self, pos: Position) -> Result<&Self, &str> {
         if self.is_game_over() {
             return Err("Game over");
         }
-        if self.is_legal_move(mov) {
-            self.board.put_stone(mov);
+        if self.is_legal_move(pos) {
+            self.board.put_stone(pos.as_bits());
             self.update_satus();
             Ok(self)
         } else {
@@ -89,10 +90,10 @@ impl UiBoard {
         self.board.count_white()
     }
 
-    pub fn color_at(&self, pos: u64) -> Color {
-        if self.is_black_at(pos) {
+    pub fn color_at(&self, pos: Position) -> Color {
+        if self.is_black_at(pos.as_bits()) {
             Color::Black
-        } else if self.is_white_at(pos) {
+        } else if self.is_white_at(pos.as_bits()) {
             Color::White
         } else {
             Color::Empty
@@ -110,8 +111,8 @@ impl UiBoard {
         self.board.is_game_over()
     }
 
-    pub fn is_legal_move(&self, mov: u64) -> bool {
-        self.board.is_legal_move(mov)
+    pub fn is_legal_move(&self, pos: Position) -> bool {
+        self.board.is_legal_move(pos.as_bits())
     }
 
     fn legal_moves(&self) -> Moves {
@@ -122,8 +123,8 @@ impl UiBoard {
         self.board.legal_moves_as_vec()
     }
 
-    pub fn reversible_stones(&self, mov: Move) -> BitBoard {
-        self.board.reversible_stones(mov)
+    pub fn reversible_stones(&self, pos: Position) -> Positions {
+        Positions::new(self.board.reversible_stones(pos.as_bits()))
     }
 
     ////////////////////////////////////////////////////////////////
@@ -169,11 +170,11 @@ impl fmt::Display for UiBoard {
                 write!(f, "\n{} ", i / 8 + 1)?;
             }
             let pos = (1 << 63) >> i;
-            let grid_char = match self.color_at(pos) {
+            let grid_char = match self.color_at(Position::new(pos)) {
                 Color::White => white,
                 Color::Black => black,
                 Color::Empty => {
-                    if self.is_legal_move(pos) {
+                    if self.is_legal_move(Position::new(pos)) {
                         "＊"
                     } else {
                         "・"

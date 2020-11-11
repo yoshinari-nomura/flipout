@@ -18,42 +18,22 @@ usage: flipout [-a] [-r]
     process::exit(-1);
 }
 
-struct Config {
-    pub auto_demo: bool,
-    pub reverse_video: bool,
-}
-
-impl Config {
-    pub fn new() -> Config {
-        Config {
-            auto_demo: false,
-            reverse_video: false,
-        }
-    }
-}
-
-fn play(
-    mut board: UiBoard,
-    screen: DumbScreen,
-    mut black: Box<dyn Player>,
-    mut white: Box<dyn Player>,
-) {
+fn play(mut board: UiBoard, screen: DumbScreen, mut black: impl Player, mut white: impl Player) {
     screen.update_screen(&board);
 
     loop {
-        let player = if board.is_black_turn() {
-            &mut black
+        let action = if board.is_black_turn() {
+            black.action(&board)
         } else {
-            &mut white
+            white.action(&board)
         };
-
-        let action = player.action(&board);
 
         match action {
             Action::GiveUp => break,
             Action::Pass => board.pass().is_ok(),
             Action::Move(mov) => board.put_stone(mov.as_bits()).is_ok(),
         };
+
         screen.update_screen(&board);
 
         if board.is_game_over() {
@@ -63,27 +43,28 @@ fn play(
 }
 
 fn main() {
-    let mut cnf = Config::new();
+    let mut opt_auto_demo = false;
+    let mut opt_reverse_video = false;
+
     let tty = Box::new(BufReader::new(io::stdin()));
 
     for arg in env::args().skip(1) {
         match &*arg {
-            "-a" => cnf.auto_demo = true,
-            "-r" => cnf.reverse_video = true,
+            "-a" => opt_auto_demo = true,
+            "-r" => opt_reverse_video = true,
             _ => {
                 usage_and_exit();
             }
         }
     }
 
-    let board = UiBoard::new(cnf.reverse_video);
-    let screen = DumbScreen::new(cnf.auto_demo);
-    let black: Box<dyn Player> = if cnf.auto_demo {
-        Box::new(RobotPlayer::new())
-    } else {
-        Box::new(HumanPlayer::new(tty))
-    };
-    let white: Box<dyn Player> = Box::new(CleverRobotPlayer::new());
+    let board = UiBoard::new(opt_reverse_video);
+    let screen = DumbScreen::new(opt_auto_demo);
+    let white = CleverRobotPlayer::new();
 
-    play(board, screen, black, white);
+    if opt_auto_demo {
+        play(board, screen, RobotPlayer::new(), white);
+    } else {
+        play(board, screen, HumanPlayer::new(tty), white);
+    }
 }

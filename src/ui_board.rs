@@ -2,10 +2,6 @@ use crate::board::{Board, Turn};
 use crate::position::*;
 use std::fmt;
 
-pub type Move = u64;
-pub type Moves = u64;
-pub type BitBoard = u64;
-
 pub enum Color {
     Black,
     White,
@@ -52,7 +48,7 @@ impl UiBoard {
         if self.is_game_over() {
             return Err("Game over");
         }
-        if self.legal_moves() == 0 {
+        if self.board.legal_moves() == 0 {
             self.board.pass();
             self.update_satus();
             Ok(self)
@@ -66,7 +62,7 @@ impl UiBoard {
             self.whatnow = None;
             return;
         }
-        if self.legal_moves() == 0 {
+        if self.board.legal_moves() == 0 {
             self.board.pass();
         }
         self.whatnow = self.turn();
@@ -115,12 +111,8 @@ impl UiBoard {
         self.board.is_legal_move(pos.as_bits())
     }
 
-    fn legal_moves(&self) -> Moves {
-        self.board.legal_moves()
-    }
-
-    pub fn legal_moves_as_vec(&self) -> Vec<Move> {
-        self.board.legal_moves_as_vec()
+    pub fn legal_moves(&self) -> Positions {
+        Positions::new(self.board.legal_moves())
     }
 
     pub fn reversible_stones(&self, pos: Position) -> Positions {

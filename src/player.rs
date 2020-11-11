@@ -66,14 +66,14 @@ impl HumanPlayer {
 
 impl Player for RobotPlayer {
     fn action(&mut self, board: &UiBoard) -> Action {
-        let vec = board.legal_moves_as_vec();
+        let vec: Vec<Position> = board.legal_moves().collect();
 
         if vec.is_empty() {
             Action::Pass
         } else {
             let rnd: usize = rand::random();
-            let mov = vec[rnd % vec.len()];
-            Action::Move(Position::new(mov))
+            let pos = vec[rnd % vec.len()];
+            Action::Move(pos)
         }
     }
 }

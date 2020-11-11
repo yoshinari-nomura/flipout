@@ -4,10 +4,6 @@
 #[macro_use]
 pub mod utils;
 
-pub type BitBoard = u64;
-pub type Position = u64;
-pub type Positions = u64;
-
 pub mod bitboard;
 pub mod board;
 pub mod dumb_screen;

@@ -137,18 +137,6 @@ impl Board {
         }
     }
 
-    pub fn legal_moves_as_vec(&self) -> Vec<Move> {
-        let mut moves = self.legal_moves();
-        let mut vec = Vec::new();
-
-        while moves != 0 {
-            let mov = 1 << moves.trailing_zeros();
-            vec.push(mov);
-            moves &= !mov;
-        }
-        vec
-    }
-
     pub fn is_black_turn(&self) -> bool {
         self.turn == Turn::Black
     }

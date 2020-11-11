@@ -25,7 +25,7 @@ impl Default for Game {
 #[wasm_bindgen]
 impl Game {
     pub fn new() -> Self {
-        let ui = UiBoard::new(false);
+        let ui = UiBoard::new();
         let ai: Box<dyn Player> = Box::new(CleverRobotPlayer::new());
         Game { board: ui, ai }
     }

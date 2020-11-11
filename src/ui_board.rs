@@ -13,26 +13,26 @@ pub enum Color {
 
 pub struct UiBoard {
     board: Board,
-    reverse_video: bool,
     whatnow: Option<Turn>,
 }
 
+impl Default for UiBoard {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl UiBoard {
-    pub fn new(reverse_video: bool) -> Self {
+    pub fn new() -> Self {
         let board = Board::new();
         UiBoard {
             board,
-            reverse_video,
             whatnow: Some(Turn::Black),
         }
     }
 
     ////////////////////////////////////////////////////////////////
     // Mutable functions
-
-    pub fn set_reverse_video(&mut self) {
-        self.reverse_video = true;
-    }
 
     pub fn put_stone(&mut self, mov: Move) -> Result<&Self, &str> {
         if self.is_game_over() {
@@ -155,9 +155,12 @@ impl UiBoard {
 
 impl fmt::Display for UiBoard {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let black = if self.reverse_video { "○" } else { "●" };
-        let white = if self.reverse_video { "●" } else { "○" };
-        let turn = if self.is_black_turn() { black } else { white };
+        let (black, white) = ("●", "○");
+        let turn = match self.turn() {
+            Some(Turn::White) => white,
+            Some(Turn::Black) => black,
+            None => "None",
+        };
 
         write!(f, "  ａｂｃｄｅｆｇｈ")?;
 

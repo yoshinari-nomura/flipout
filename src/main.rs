@@ -58,8 +58,8 @@ fn main() {
         }
     }
 
-    let board = UiBoard::new(opt_reverse_video);
-    let screen = DumbScreen::new(opt_auto_demo);
+    let board = UiBoard::new();
+    let screen = DumbScreen::new(opt_auto_demo, opt_reverse_video);
     let white = CleverRobotPlayer::new();
 
     if opt_auto_demo {

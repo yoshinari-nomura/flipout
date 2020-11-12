@@ -8,6 +8,7 @@ pub mod bitboard;
 pub mod board;
 pub mod dumb_screen;
 pub mod game;
+pub mod history;
 pub mod minimax;
 pub mod player;
 pub mod position;

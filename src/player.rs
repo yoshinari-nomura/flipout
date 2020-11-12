@@ -5,6 +5,7 @@ use std::fmt;
 use std::io::{self, BufRead, Write};
 use std::str::FromStr;
 
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Action {
     Move(Position),
     Pass,

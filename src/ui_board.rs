@@ -1,4 +1,6 @@
 use crate::board::{Board, Turn};
+use crate::history::*;
+use crate::player::Action;
 use crate::position::*;
 use std::fmt;
 
@@ -10,6 +12,7 @@ pub enum Color {
 
 pub struct UiBoard {
     board: Board,
+    history: Vec<History>,
     whatnow: Option<Turn>,
 }
 
@@ -24,6 +27,7 @@ impl UiBoard {
         let board = Board::new();
         UiBoard {
             board,
+            history: Vec::new(),
             whatnow: Some(Turn::Black),
         }
     }
@@ -36,6 +40,11 @@ impl UiBoard {
             return Err("Game over");
         }
         if self.is_legal_move(pos) {
+            self.history.push(History::new(
+                self.board.turn,
+                Action::Move(pos),
+                self.reversible_stones(pos),
+            ));
             self.board.put_stone(pos.as_bits());
             self.update_satus();
             Ok(self)
@@ -49,6 +58,11 @@ impl UiBoard {
             return Err("Game over");
         }
         if self.board.legal_moves() == 0 {
+            self.history.push(History::new(
+                self.board.turn,
+                Action::Pass,
+                Positions::empty(),
+            ));
             self.board.pass();
             self.update_satus();
             Ok(self)
@@ -63,6 +77,11 @@ impl UiBoard {
             return;
         }
         if self.board.legal_moves() == 0 {
+            self.history.push(History::new(
+                self.board.turn,
+                Action::Pass,
+                Positions::empty(),
+            ));
             self.board.pass();
         }
         self.whatnow = self.turn();
@@ -120,7 +139,7 @@ impl UiBoard {
     }
 
     ////////////////////////////////////////////////////////////////
-    // Current status
+    // Current status and history
 
     pub fn turn(&self) -> Option<Turn> {
         if self.is_game_over() {
@@ -132,6 +151,14 @@ impl UiBoard {
 
     pub fn is_black_turn(&self) -> bool {
         self.board.is_black_turn()
+    }
+
+    pub fn last_action(&self, turn: Turn) -> Option<Action> {
+        if let Some(hist) = self.history.iter().rev().find(|h| h.turn == turn) {
+            Some(hist.action)
+        } else {
+            None
+        }
     }
 
     ////////////////////////////////////////////////////////////////

@@ -6,12 +6,6 @@ use crate::wasm_screen::*;
 
 use wasm_bindgen::prelude::*;
 
-macro_rules! message {
-    ( $id:expr, $( $t:tt )* ) => {
-        screen_show_message($id, &format!( $( $t )* ).into());
-    }
-}
-
 #[wasm_bindgen]
 pub struct Game {
     board: UiBoard,
@@ -83,32 +77,16 @@ impl Game {
             return self.board.whatnow();
         }
 
-        let name = if turn == Turn::Black { "you" } else { "com" };
-
         match action {
-            Action::GiveUp => message!(name, "Give up"),
+            Action::GiveUp => (),
             Action::Pass => {
                 if self.board.pass().is_ok() {
-                    message!(name, "Pass");
                     self.update_screen();
-                } else {
-                    message!(name, "Can't pass");
                 }
             }
             Action::Move(pos) => {
                 let reversible = self.board.reversible_stones(pos);
                 if self.board.put_stone(pos).is_ok() {
-                    message!(name, "Move {}", pos);
-                    if let Some(next_turn) = self.board.whatnow() {
-                        if next_turn == turn {
-                            let name = if turn.opposit() == Turn::Black {
-                                "you"
-                            } else {
-                                "com"
-                            };
-                            message!(name, "Pass");
-                        }
-                    }
                     self.screen
                         .update_screen_with_animation(reversible, &self.board);
                 }
@@ -116,9 +94,4 @@ impl Game {
         }
         self.board.whatnow()
     }
-}
-
-#[wasm_bindgen(module = "/src/javascripts/screen.js")]
-extern "C" {
-    pub fn screen_show_message(id: &str, message: &JsValue);
 }

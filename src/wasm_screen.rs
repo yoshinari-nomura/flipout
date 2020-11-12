@@ -1,4 +1,5 @@
 use crate::board::Turn;
+use crate::player::Action;
 use crate::position::*;
 use crate::ui_board::{Color, UiBoard};
 
@@ -24,12 +25,30 @@ impl WasmScreen {
     }
 
     pub fn update_screen_with_animation(&self, reversed: Positions, board: &UiBoard) {
-        message!("black", "{}", board.count_black());
-        message!("white", "{}", board.count_white());
+        self.update_message(board, Turn::Black);
+        self.update_message(board, Turn::White);
 
         for pos in Positions::fill() {
             let (opcode, color) = self.operation_at(board, pos, reversed);
             screen_update_grid(opcode, color, pos.x(), pos.y());
+        }
+    }
+
+    fn update_message(&self, board: &UiBoard, turn: Turn) {
+        if turn == Turn::Black {
+            message!("black", "{}", board.count_black());
+        } else {
+            message!("white", "{}", board.count_white());
+        }
+
+        let name = if turn == Turn::Black { "you" } else { "com" };
+        let last_action = board.last_action(turn);
+
+        match last_action {
+            Some(Action::GiveUp) => message!(name, "Give up"),
+            Some(Action::Pass) => message!(name, "Pass"),
+            Some(Action::Move(pos)) => message!(name, "Move {}", pos),
+            None => (),
         }
     }
 
